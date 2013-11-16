@@ -1,0 +1,10 @@
+html,
+body {
+  font-size: 24px;
+  box-sizing: border-box;
+}
+.address,
+.client {
+  display: inline-block;
+  width: 49%;
+}
