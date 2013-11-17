@@ -2,6 +2,7 @@
 
 express = require 'express'
 routes = require './routes'
+budgets = require './routes/budgets'
 http = require 'http'
 path = require 'path'
 
@@ -25,9 +26,11 @@ app.use(express.static(path.join(__dirname, 'public')))
 if 'development' == app.get('env')
   app.use(express.errorHandler())
 
-app.get('/', routes.index)
-app.get('/doc', routes.doc)
-app.get('/pdf', routes.pdf)
+#app.get('/', budgets.edit)
+
+app.get('/:budget', budgets.edit)
+app.get('/:budget/preview', budgets.preview)
+app.get('/:budget/pdf', budgets.pdf)
 
 http.createServer(app).listen app.get('port'), ->
   console.log('Express server listening on port ' + app.get('port'))
