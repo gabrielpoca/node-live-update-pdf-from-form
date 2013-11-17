@@ -4,6 +4,7 @@
     <title>Some Page</title>
     <link rel='stylesheet' href='/stylesheets/style.css' />
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
     <script src='/javascripts/pdf.js'></script>
     <script src='/javascripts/pdf.worker.js'></script>
   </head>
@@ -19,6 +20,16 @@
       <a href="0/pdf">Download</a>
       <canvas id="pdf-canvas"></canvas>
     </section>
+
+    <script>
+      $(document).ready(function() {
+        var socket = io.connect('http://localhost')
+        socket.on('news', function(data) {
+          console.log(data);
+          socket.emit('update', { client: { name: 'Rui' } });
+        });
+      });
+    </script>
 
     <script>
       $(document).ready(function() {

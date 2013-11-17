@@ -1,8 +1,10 @@
 # Module dependencies.
 
 express = require 'express'
+
 routes = require './routes'
 budgets = require './routes/budgets'
+
 http = require 'http'
 path = require 'path'
 
@@ -32,5 +34,12 @@ app.get('/:budget', budgets.edit)
 app.get('/:budget/preview', budgets.preview)
 app.get('/:budget/pdf', budgets.pdf)
 
-http.createServer(app).listen app.get('port'), ->
+server = http.createServer(app).listen app.get('port'), ->
   console.log('Express server listening on port ' + app.get('port'))
+
+io = require('socket.io').listen(server)
+
+io.sockets.on 'connection', (socket) ->
+  socket.emit 'news'
+  socket.on 'update', (data) ->
+    console.log data
