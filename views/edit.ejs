@@ -10,12 +10,15 @@
   </head>
   <body>
     <h1>Some Page</h1>
+
     <section class="inputs">
       <p>Hellloooooooo!</p>
       <p>Welcome to sss</p>
       <label for="client_name">Name</label>
       <input id="client_name" type="text">
+      <button id="info-submit" type="submit">Update</button>
     </section>
+
     <section class="preview">
       <a href="0/pdf">Download</a>
       <canvas id="pdf-canvas"></canvas>
@@ -23,34 +26,36 @@
 
     <script>
       $(document).ready(function() {
+        var update = function(id) {
+          PDFJS.getDocument(id+'/pdf').then(function(pdf) {
+            pdf.getPage(1).then(function(page) {
+              var scale = 1;
+              var viewport = page.getViewport(scale);
+
+              var canvas = document.getElementById('pdf-canvas');
+              var context = canvas.getContext('2d');
+              canvas.height = viewport.height;
+              canvas.width = viewport.width;
+
+              var renderContext = {
+                canvasContext: context,
+                viewport: viewport
+              };
+              page.render(renderContext);
+            });
+          });
+        }
+
         var socket = io.connect('http://localhost')
-        socket.on('news', function(data) {
-          console.log(data);
-          socket.emit('update', { client: { name: 'Rui' } });
-        });
-      });
-    </script>
 
-    <script>
-      $(document).ready(function() {
-        PDFJS.getDocument('0/pdf').then(function(pdf) {
-          pdf.getPage(1).then(function(page) {
-            var scale = 1;
-            var viewport = page.getViewport(scale);
-
-            var canvas = document.getElementById('pdf-canvas');
-            var context = canvas.getContext('2d');
-            canvas.height = viewport.height;
-            canvas.width = viewport.width;
-
-            var renderContext = {
-              canvasContext: context,
-              viewport: viewport
-            };
-            page.render(renderContext);
+        socket.on('id', function(data) {
+          update(data.id);
+          $('#info-submit').click(function() {
+            update(data.id);
+            socket.emit('update', { name: $('#client_name').val() });
           });
         });
-      })
+      });
     </script>
   </body>
 </html>
